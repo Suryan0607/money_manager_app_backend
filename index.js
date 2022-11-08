@@ -29,7 +29,7 @@ app.use(express.json());
 
 app.use('/api',userroute);
 app.use('/api',mainroute);
-
+app.use(generalroute)
 
 
 const PORT=process.env.PORT || 8081;
