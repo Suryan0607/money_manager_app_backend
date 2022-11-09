@@ -48,19 +48,21 @@ router.post("/signin", async (req, res) => {
 
         const existingUser = await User.find({ email: email });
 
+        console.log(existingUser[0]._id)
+
         if (existingUser) {
 
             const isValidUser = await bcrypt.compare(password, existingUser[0].hashed_password);
             
             if (isValidUser) {
-                const token = jwt.sign({ _id: existingUser._id }, process.env.SECRET_KEY);
+                const token = jwt.sign({ _id: existingUser[0]._id }, process.env.SECRET_KEY);
 
 
                 res.cookie('entryToken', token, {
                     expires: new Date(Date.now() + 9999999),
                     httpOnly: false
                 });
-                
+
                 const { _id, username, email } = existingUser[0];
                 return res.status(200).json({ token: token, user: { _id, email, username } });
 
