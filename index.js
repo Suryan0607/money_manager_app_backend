@@ -7,7 +7,7 @@ const cors=require('cors');
 //importing routes
 const generalroute = require('./routers/gen_routes');
 const userroute = require('./routers/user_reg_routes')
-const {requireSignIn,isAuth,userSignupValidator}=require('./routers/auth_routes')
+const {requireSignIn,isAuth}=require('./routers/auth_routes')
 const mainroute = require('./routers/con-routes')
 
 // importing db
@@ -28,7 +28,7 @@ app.use(express.json());
 //custom middleware
 
 app.use('/api',userroute);
-app.use('/api',mainroute);
+app.use('/api',requireSignIn,isAuth,mainroute);
 app.use(generalroute)
 
 

@@ -43,20 +43,24 @@ router.post("/signup", async (req, res) => {
 
 //signin
 router.post("/signin", async (req, res) => {
-    try {
-        
+    try {  
         const { email, password } = req.body;
+
         const existingUser = await User.find({ email: email });
+
         if (existingUser) {
+
             const isValidUser = await bcrypt.compare(password, existingUser[0].hashed_password);
             
             if (isValidUser) {
                 const token = jwt.sign({ _id: existingUser._id }, process.env.SECRET_KEY);
-                
+
+
                 res.cookie('entryToken', token, {
-                     expires: new Date(Date.now() + 9999999),
-                     httpOnly:false
-                    });
+                    expires: new Date(Date.now() + 9999999),
+                    httpOnly: false
+                });
+                
                 const { _id, username, email } = existingUser[0];
                 return res.status(200).json({ token: token, user: { _id, email, username } });
 
@@ -70,6 +74,7 @@ router.post("/signin", async (req, res) => {
             message: "User Doesn't Exist."
         });
     } catch (error) {
+        console.log(error)
         return res.status(500).send({
             message: "Internal Server Error"
         })
@@ -102,18 +107,40 @@ router.get('/user/:id', (req, res) => {
 
 //update
 router.put('/user/:id',  (req, res) => {
-
+try{
     User.findOneAndUpdate({_id: req.params.id}, {$set: req.body}, {new: true},
-        (err, user) => {
+        (err, data) => {
             if(err){
                 return res.status(400).json({
                     error: "Error while updating user"
                 });
             }
 
-            return res.status(201).json(user);
+            return res.status(201).json(data);
         });
+    }
+    catch(err){
+        res.status(500).send('Internal Server Error', err)
+    }
 })
+
+//delete
+router.delete('/user/:id',  (req, res) => {
+    try {
+    User.deleteOne({ _id: req.params.id },
+        (err, Data) => {
+            if (err) {
+                return res.status(400).send('Error While Removing User')
+            }
+            res.status(201).send("Account Deleted Successfully")
+        });
+    } catch (err) {
+        res.status(500).send('Internal Server Error', err)
+    };
+})
+
+
+
 
 module.exports = router;
 
