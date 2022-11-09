@@ -48,7 +48,6 @@ router.post("/signin", async (req, res) => {
 
         const existingUser = await User.find({ email: email });
 
-        console.log(existingUser[0]._id)
 
         if (existingUser) {
 
@@ -127,9 +126,9 @@ try{
 })
 
 //delete
-router.delete('/user/:id',  (req, res) => {
+router.delete('/user',  (req, res) => {
     try {
-    User.deleteOne({ _id: req.params.id },
+    User.deleteOne({ _id: req.body },
         (err, Data) => {
             if (err) {
                 return res.status(400).send('Error While Removing User')

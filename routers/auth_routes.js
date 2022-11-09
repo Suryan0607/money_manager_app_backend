@@ -9,10 +9,7 @@ exports.requireSignIn = jwt({
 });
 
 exports.isAuth = (req, res, next) =>{
-    console.log("Auth: ", req.auth)
-    
     let user = req.auth._id;
-
     if(!user){
         return res.status(403).json({
             err: "Access denied"
